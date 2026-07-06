@@ -68,6 +68,9 @@ const fragmentShader = /* glsl */ `
     float intensity = dot(normalize(vNormal), normalize(sunDirection));
     vec4 dayColor = texture2D(dayTexture, vUv);
     vec4 nightColor = texture2D(nightTexture, vUv);
+    // Night grading: gamma (1.6) crushes the dim ocean/terrain toward black,
+    // then gain (2.2) boosts what's left — the city lights.
+    nightColor.rgb = pow(nightColor.rgb, vec3(1.6)) * 2.2;
     // Twilight band: widen/narrow by changing the +/- range
     float blendFactor = smoothstep(-0.12, 0.12, intensity);
     gl_FragColor = mix(nightColor, dayColor, blendFactor);
